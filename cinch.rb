@@ -1,23 +1,14 @@
+#!/usr/bin/ruby
 require 'cinch'
 require 'rubygems'
 require 'weather-api'
 require 'open_weather'
 require 'forecast_io'
+require './restaurant.rb'
 
-class Restaurant
-	attr_accessor :name
-	attr_accessor :type
-	attr_accessor :seating
-	attr_accessor :rating
-	attr_accessor :visited
-  def initialize (name, style=[], seating_max=0, rating=0, visited=[])  
-	  @name = name
-		@type = style
-		@seating = seating
-		@rating = rating
-		@visited = visited
-	end
-end
+require '/home/myoder/repos/cinch/.secrets/forecast_api.rb'
+require './.secrets/openweather.rb'
+
 
 city_market = Restaurant.new("City Market", ["sushi"], "6",)
 virgils = Restaurant.new("Virgil's Tacos", ["hispanic"], "4")
@@ -27,7 +18,6 @@ sosta = Restaurant.new("Sosta", "[cafe]", "4")
 restaurant = [city_market, virgils, capital_club, garland, sosta]
 
 
-ForecastIO.api_key = "216232cc674a79fb3f4c5afefd5ead8f"
 
 bot = Cinch::Bot.new do
 	configure do |c|
@@ -46,26 +36,32 @@ bot = Cinch::Bot.new do
 		w.reply "#{response.title} #{response.condition.temp} degress Celsius; #{response.condition.text}"
 	end
 
-	on :message, "temps" do |t|
-		response = OpenWeather::ForecastDaily.city_id("1273874")
+	on :message, "temp" do |t|
+	  options = { units: "metric", APPID: open_weather_api_key }
+		response = OpenWeather::ForecastDaily.city_id("1273874", options)
 		t.reply "#{t.user.nick}, the weather for today is:"
-		t.reply "response methods: #{t.methods.sort}"
-#		t.reply "#{response.methods} #{response.condition.temp} degress Celsius; #{response.condition.text}"
+		#t.reply "response methods: #{t.methods.sort}"
+		t.reply "#{response.methods} #{response.condition.temp} degress Celsius; #{response.condition.text}"
 	end
 
 	on :message, "forecast" do |f|
 		response = ForecastIO.forecast(37.8267, -122.423)
 		f.reply "Get ready..."
+		(1..3).each do 
+		  sleep 1 
+			f.reply "..."
+		end
+=begin
 		sleep 1
 		f.reply "...."
 		sleep 1
 		f.reply "...."
-		sleep 1
-		butts = response["currently"]
+=end
+		response = response["currently"]
 		f.reply "The attributes of your current weather experience: "
-		butts.each do |x|
+		response.each do |x|
 			f.reply "#{x}"
-			sleep 1
+			sleep 0.5
 		end
 	end
 
