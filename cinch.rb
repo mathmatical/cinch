@@ -9,6 +9,8 @@ require './restaurant.rb'
 require '/home/myoder/repos/cinch/.secrets/forecast_api.rb'
 require './.secrets/openweather.rb'
 
+  puts "this was 2 spaces"
+  puts "this was a tab"
 
 city_market = Restaurant.new("City Market", ["sushi"], "6",)
 virgils = Restaurant.new("Virgil's Tacos", ["hispanic"], "4")
